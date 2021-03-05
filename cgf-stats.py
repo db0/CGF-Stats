@@ -5,6 +5,12 @@ from flask_limiter.util import get_remote_address
 from uuid import uuid4
 from datetime import datetime
 import json, os
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument(dest='gamename', help="The Name of the Godot Game")
+
 
 REST_API = Flask(__name__)
 # Very basic DOS prevention
@@ -18,16 +24,19 @@ api = Api(REST_API)
 games = {}
 
 def write_to_disk():
-	with open("games", 'w') as db: 
+	with open("games", 'w') as db:
 		json.dump(games,db)
-		
+
 
 class NewGame(Resource):
 
 	def post(self):
 		parser = reqparse.RequestParser()
+		parser.add_argument("game_name")
 		parser.add_argument("deck")
 		args = parser.parse_args()
+		if args["game_name"] != stat_args.gamename:
+			return("Wrong Game!", 403)
 		game_id = str(uuid4())
 		games[game_id] = {
 			"date": datetime.now().strftime("%Y-%m-%d"),
@@ -52,15 +61,20 @@ class Game(Resource):
 		args = parser.parse_args()
 		if not games.get(gameid):
 			return("Game ID not found", 404)
+		elif games[gameid].get('state') != "unfinished":
+			return("Game already resolved", 409)
 		else:
 			games[gameid]['state'] = args['state']
 			write_to_disk()
 			return(games[gameid], 200)
 
 if os.path.isfile("games"):
-	with open("games") as db: 
+	with open("games") as db:
 		games = json.load(db)
-	
+
+# Parse and print the results
+stat_args = parser.parse_args()
+
 api.add_resource(Game, "/game/<string:gameid>")
 api.add_resource(NewGame, "/newgame/")
 
