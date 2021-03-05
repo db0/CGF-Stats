@@ -2,10 +2,29 @@
 
 A basic REST API service to record and retrieve game stats from [Godot Card Game Framework](https://github.com/db0/godot-card-game-framework) games
 
-## Install
+*Requires Python3*
 
-Upload it to your server and run it
+## Setup
 
-```python cgf-stats.py "My Cool Card Game"```
+Clone this repository from your server and run it
 
-It will bring a REST API in port 8000
+```python cgf-stats.py "My Cool Card Game" -i "your.ip.address"```
+
+It will bring the REST API in port 8000
+
+## Usage
+
+In the Card Game Framework, edit your CFConst and add your server address and port to STATS_URI and STATS_PORT.
+
+Whenever you start a new game, initiate the stats with:
+```var stats = GameStats.new()```
+
+Whenever the game ends, finalize the game with
+
+```stats.complete_game({"state": state})```
+
+Where `state` should be something like "Victory" or "Loss"
+
+## Game Stats
+
+The game stats are stored after each modification in the `games` file in the same directory as simple json. You can parse this file to compile stats from all the games played for your game

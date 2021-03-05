@@ -19,7 +19,7 @@ REST_API = Flask(__name__)
 limiter = Limiter(
     REST_API,
     key_func=get_remote_address,
-    default_limits=["120 per minute"]
+    default_limits=["90 per minute"]
 )
 api = Api(REST_API)
 
