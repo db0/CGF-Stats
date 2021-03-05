@@ -66,7 +66,7 @@ class Game(Resource):
 			return("Game already resolved", 409)
 		else:
 			games[gameid]['state'] = args['state']
-			games[game_id]["end_datetime"]: datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+			games[game_id]["end_datetime"]: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 			write_to_disk()
 			return(games[gameid], 200)
 
