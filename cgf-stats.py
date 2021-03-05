@@ -10,6 +10,8 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument(dest='gamename', help="The Name of the Godot Game")
+parser.add_argument('-i', '--ip', action="store", default='127.0.0.1', help="The listening IP Address")
+parser.add_argument('-p', '--port', action="store", default='8000', help="The listening Port")
 
 
 REST_API = Flask(__name__)
@@ -78,4 +80,4 @@ stat_args = parser.parse_args()
 api.add_resource(Game, "/game/<string:gameid>")
 api.add_resource(NewGame, "/newgame/")
 
-REST_API.run(debug=True,port=8000)
+REST_API.run(debug=True,host=stat_args.ip,port=stat_args.port)
