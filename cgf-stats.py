@@ -41,8 +41,7 @@ class NewGame(Resource):
 			return("Wrong Game!", 403)
 		game_id = str(uuid4())
 		games[game_id] = {
-			"date": datetime.now().strftime("%Y-%m-%d"),
-			"time": datetime.now().strftime("%H:%M:%S"),
+			"start_datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 			"deck": args["deck"],
 			"state": "unfinished"
 		}
@@ -67,6 +66,7 @@ class Game(Resource):
 			return("Game already resolved", 409)
 		else:
 			games[gameid]['state'] = args['state']
+			games[game_id]["end_datetime"]: datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 			write_to_disk()
 			return(games[gameid], 200)
 
