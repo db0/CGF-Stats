@@ -68,7 +68,7 @@ class Game(Resource):
 		else:
 			games[gameid]['state'] = args['state']
 			games[gameid]['details'] = args['details']
-			games[game_id]["end_datetime"]: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+			games[gameid]["end_datetime"]: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 			write_to_disk()
 			return(games[gameid], 200)
 
