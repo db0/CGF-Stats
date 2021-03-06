@@ -25,8 +25,8 @@ Whenever the game ends, finalize the game with
 
 ```stats.complete_game({"state": state, "details": details})```
 
-Where `state` should be something like "Victory" or "Loss". `details` can be anything json serializable you want, but most likely a dictionary. It will be inserted as it is into your game stats.
+Where `state` should be something like "victory" or "defeat". `details` is a dictionary with any additional details about the game you want to store. It will be inserted as it is into your game stats.
 
 ## Game Stats
 
-The game stats are stored after each modification in the `games` file in the same directory as simple json. You can parse this file to compile stats from all the games played for your game
+The game stats are stored after each modification in the `games` file in the same directory as simple json. You can parse this file to compile stats from all the games played for your game until this point
