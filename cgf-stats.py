@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restful import Resource, reqparse, Api
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_cors import CORS
 from uuid import uuid4
 from datetime import datetime
 import json, os
@@ -21,6 +22,7 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["90 per minute"]
 )
+CORS(REST_API)
 api = Api(REST_API)
 
 games = {}
