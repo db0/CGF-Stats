@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_restful import Resource, reqparse, Api
-from flask_restful.utils import cors
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from uuid import uuid4
@@ -23,7 +22,6 @@ limiter = Limiter(
     default_limits=["90 per minute"]
 )
 api = Api(REST_API)
-api.decorators=[cors.crossdomain(origin='*')]
 
 games = {}
 
@@ -31,6 +29,13 @@ def write_to_disk():
 	with open("games", 'w') as db:
 		json.dump(games,db)
 
+@REST_API.after_request
+def after_request(response):
+	response.headers["Access-Control-Allow-Origin"] = "*"
+	response.headers["Access-Control-Allow-Credentials"] = "true"
+	response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, PUT, DELETE"
+	response.headers["Access-Control-Allow-Headers"] = "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"
+	return response
 
 class NewGame(Resource):
 	def post(self):
@@ -50,6 +55,9 @@ class NewGame(Resource):
 		}
 		write_to_disk()
 		return(game_id, 201)
+
+	def options(self):
+		return("OK", 200)
 
 class Game(Resource):
 	def get(self, gameid):
@@ -75,6 +83,8 @@ class Game(Resource):
 			write_to_disk()
 			return(games[gameid], 200)
 
+	def options(self):
+		return("OK", 200)
 
 if os.path.isfile("games"):
 	with open("games") as db:
