@@ -17,13 +17,15 @@ It will bring the REST API in port 8000
 In the Card Game Framework, edit your CFConst and add your server address and port to STATS_URI and STATS_PORT.
 
 Whenever you start a new game, initiate the stats with:
-```var stats = GameStats.new()```
+```var stats = GameStats.new(deck)```
+
+Where `deck` should be a dictionary with the deck contents being used
 
 Whenever the game ends, finalize the game with
 
-```stats.complete_game({"state": state})```
+```stats.complete_game({"state": state, "details": details})```
 
-Where `state` should be something like "Victory" or "Loss"
+Where `state` should be something like "Victory" or "Loss". `details` can be anything json serializable you want, but most likely a dictionary. It will be inserted as it is into your game stats.
 
 ## Game Stats
 

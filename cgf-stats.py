@@ -59,6 +59,7 @@ class Game(Resource):
 	def put(self, gameid):
 		parser = reqparse.RequestParser()
 		parser.add_argument("state")
+		parser.add_argument("details")
 		args = parser.parse_args()
 		if not games.get(gameid):
 			return("Game ID not found", 404)
@@ -66,6 +67,7 @@ class Game(Resource):
 			return("Game already resolved", 409)
 		else:
 			games[gameid]['state'] = args['state']
+			games[gameid]['details'] = args['details']
 			games[game_id]["end_datetime"]: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 			write_to_disk()
 			return(games[gameid], 200)
