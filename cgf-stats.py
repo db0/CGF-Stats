@@ -8,11 +8,11 @@ import json, os
 import argparse
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument(dest='gamename', help="The Name of the Godot Game")
-parser.add_argument('-i', '--ip', action="store", default='127.0.0.1', help="The listening IP Address")
-parser.add_argument('-p', '--port', action="store", default='8000', help="The listening Port")
-parser.add_argument('--states', action="store", default='defeat,victory', help="Valid states for end-game submission")
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument(dest='gamename', help="The Name of the Godot Game")
+arg_parser.add_argument('-i', '--ip', action="store", default='127.0.0.1', help="The listening IP Address")
+arg_parser.add_argument('-p', '--port', action="store", default='8000', help="The listening Port")
+arg_parser.add_argument('--states', action="store", default='defeat,victory', help="Valid states for end-game submission")
 
 
 REST_API = Flask(__name__)
@@ -42,9 +42,9 @@ class NewGame(Resource):
 	decorators = [limiter.limit("1/minute")]
 	def post(self):
 		parser = reqparse.RequestParser()
-		parser.add_argument("game_name")
-		parser.add_argument("deck")
-		parser.add_argument("client")
+		parser.add_argument("game_name", type=str, required=True, help="Name has to be valid string")
+		parser.add_argument("deck", type=dict, required=True, help="Has to be a dictionary")
+		parser.add_argument("client", type=str, required=True, help="Name has to be valid string")
 		args = parser.parse_args()
 		if args["game_name"] != stat_args.gamename:
 			return("Wrong Game!", 403)
@@ -71,8 +71,8 @@ class Game(Resource):
 
 	def put(self, gameid):
 		parser = reqparse.RequestParser()
-		parser.add_argument("state")
-		parser.add_argument("details")
+		parser.add_argument("state", type=str, required=True, help="Name has to be valid string")
+		parser.add_argument("details", type=dict, required=False, help="Has to be a dictionary")
 		args = parser.parse_args()
 		if not games.get(gameid):
 			return("Game ID not found", 404)
@@ -95,7 +95,7 @@ if os.path.isfile("games"):
 		games = json.load(db)
 
 # Parse and print the results
-stat_args = parser.parse_args()
+stat_args = arg_parser.parse_args()
 
 end_game_states = stat_args.states.split(',')
 api.add_resource(Game, "/game/<string:gameid>")
