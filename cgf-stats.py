@@ -81,7 +81,7 @@ class Game(Resource):
 			write_to_disk()
 			return(games[gameid], 200)
 
-	def options(self):
+	def options(self, gameid):
 		return("OK", 200)
 
 if os.path.isfile("games"):
