@@ -51,26 +51,6 @@ class NewGame(Resource):
 		write_to_disk()
 		return(game_id, 201)
 
-	# This is only here because for some reason, GODOT is sending OPTIONS instead of POST/PUT
-	# When exported to HTML5
-	def options(self):
-		parser = reqparse.RequestParser()
-		parser.add_argument("game_name")
-		parser.add_argument("deck")
-		parser.add_argument("client")
-		args = parser.parse_args()
-		if args["game_name"] != stat_args.gamename:
-			return("Wrong Game!", 403)
-		game_id = str(uuid4())
-		games[game_id] = {
-			"start_datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-			"deck": args["deck"],
-			"client": args["client"],
-			"state": "unfinished"
-		}
-		write_to_disk()
-		return(game_id, 201)
-
 class Game(Resource):
 	def get(self, gameid):
 		game_details = games.get(gameid)
@@ -95,23 +75,6 @@ class Game(Resource):
 			write_to_disk()
 			return(games[gameid], 200)
 
-	# This is only here because for some reason, GODOT is sending OPTIONS instead of POST/PUT
-	# When exported to HTML5
-	def options(self, gameid):
-		parser = reqparse.RequestParser()
-		parser.add_argument("state")
-		parser.add_argument("details")
-		args = parser.parse_args()
-		if not games.get(gameid):
-			return("Game ID not found", 404)
-		elif games[gameid].get('state') != "unfinished":
-			return("Game already resolved", 409)
-		else:
-			games[gameid]['state'] = args['state']
-			games[gameid]['details'] = args['details']
-			games[gameid]["end_datetime"]: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-			write_to_disk()
-			return(games[gameid], 200)
 
 if os.path.isfile("games"):
 	with open("games") as db:
