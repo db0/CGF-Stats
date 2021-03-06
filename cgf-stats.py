@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import Resource, reqparse, Api
+from flask_restful.utils import cors
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_cors import CORS
@@ -22,8 +23,8 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["90 per minute"]
 )
-CORS(REST_API)
 api = Api(REST_API)
+api.decorators=[cors.crossdomain(origin='*')]
 
 games = {}
 
@@ -33,7 +34,6 @@ def write_to_disk():
 
 
 class NewGame(Resource):
-
 	def post(self):
 		parser = reqparse.RequestParser()
 		parser.add_argument("game_name")
