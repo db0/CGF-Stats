@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(dest='gamename', help="The Name of the Godot Game")
 parser.add_argument('-i', '--ip', action="store", default='127.0.0.1', help="The listening IP Address")
 parser.add_argument('-p', '--port', action="store", default='8000', help="The listening Port")
+parser.add_argument('--states', action="store", default='defeat,victory', help="Valid states for end-game submission")
 
 
 REST_API = Flask(__name__)
@@ -24,6 +25,7 @@ limiter = Limiter(
 api = Api(REST_API)
 
 games = {}
+end_game_states = []
 
 def write_to_disk():
 	with open("games", 'w') as db:
@@ -37,6 +39,7 @@ def after_request(response):
 	return response
 
 class NewGame(Resource):
+	decorators = [limiter.limit("1/minute")]
 	def post(self):
 		parser = reqparse.RequestParser()
 		parser.add_argument("game_name")
@@ -75,6 +78,8 @@ class Game(Resource):
 			return("Game ID not found", 404)
 		elif games[gameid].get('state') != "unfinished":
 			return("Game already resolved", 409)
+		elif not args['state'] in end_game_states:
+			return("Invalid end-game state", 403)
 		else:
 			games[gameid]['state'] = args['state']
 			games[gameid]['details'] = args['details']
@@ -92,6 +97,7 @@ if os.path.isfile("games"):
 # Parse and print the results
 stat_args = parser.parse_args()
 
+end_game_states = stat_args.states.split(',')
 api.add_resource(Game, "/game/<string:gameid>")
 api.add_resource(NewGame, "/newgame/")
 
