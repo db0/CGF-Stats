@@ -3,7 +3,6 @@ from flask_restful import Resource, reqparse, Api
 from flask_restful.utils import cors
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from flask_cors import CORS
 from uuid import uuid4
 from datetime import datetime
 import json, os
