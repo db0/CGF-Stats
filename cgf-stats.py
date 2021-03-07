@@ -39,7 +39,7 @@ def after_request(response):
 	return response
 
 class NewGame(Resource):
-	decorators = [limiter.limit("1/minute")]
+	decorators = [limiter.limit("4/minute")]
 	def post(self):
 		parser = reqparse.RequestParser()
 		parser.add_argument("game_name", type=str, required=True, help="Name has to be valid string")
